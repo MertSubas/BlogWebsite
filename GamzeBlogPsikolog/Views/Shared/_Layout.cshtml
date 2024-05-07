@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <!-- Title -->
+    <title>Original - Lifestyle Blog Template</title>
+    <!-- Favicon -->
+    <link rel="icon" href="~/Theme/img/core-img/favicon.ico">
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="~/Theme/style.css">
+</head>
+
+<body>
+    <!-- Loader Start -->
+    <div id="preloader">
+        <div class="preload-content">
+            <div id="original-load"></div>
+        </div>
+    </div>
+    <!-- Loader End -->
+    <!-- Subscribe Modal Start -->
+    <div class="subscribe-newsletter-area">
+        <div class="modal fade" id="subsModal" tabindex="-1" role="dialog" aria-labelledby="subsModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <div class="modal-body">
+                        <h5 class="title">Yeniliklerden Haberdar Olun</h5>
+                        <form action="#" class="newsletterForm" method="post" onsubmit="return handleSubmit()">
+                            <input type="email" name="email" id="subscribesForm2" placeholder="Email adresiniz" required>
+                            <button type="submit" class="btn original-btn">Abone Ol!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Subscribe Modal End -->
+    <!-- ##### Header Area Start ##### -->
+    <header class="header-area">
+        <!-- Top Menu Start -->
+        <div class="top-header">
+            <div class="container h-100">
+                <div class="row h-100 align-items-center">
+                    <!-- Breaking News Area -->
+                    <div class="col-12 col-sm-8">
+                        <div class="breaking-news-area">
+                            <div id="breakingNewsTicker" class="ticker">
+                                <ul>
+                                    <li><a href="/home/index">Herkese Merhaba</a></li>
+                                    <li><a href="/home/index">Gamze Çoban</a></li>
+                                    <li><a href="/home/index">Herkese Merhaba</a></li>
+                                    <li><a href="/home/index">Gamze Çoban</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Top Social Area -->
+                    <div class="col-12 col-sm-4">
+                        <div class="top-social-area">
+                            <vc:social></vc:social>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Top Menu End -->
+        <!-- Logo Area Start -->
+        <div class="logo-area text-center">
+            <div class="container h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="col-12">
+                        <a href="/Home" class="original-logo"><img style="width:15rem; margin-top:-3.5rem;" src="~/logo/oie_transparent.png" alt=""></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <!-- Logo Area End-->
+        <!-- Navbar Start -->
+        <div class="original-nav-area" id="stickyNav">
+            <div class="classy-nav-container breakpoint-off">
+                <div class="container">
+                    <!-- Classy Menu -->
+                    <nav class="classy-navbar justify-content-between">
+
+                        <!-- Subscribe btn -->
+                        <div class="subscribe-btn">
+                            <a href="#" class="btn subscribe-btn" data-toggle="modal" data-target="#subsModal">Abone Ol!</a>
+                        </div>
+
+                        <!-- Navbar Toggler -->
+                        <div class="classy-navbar-toggler">
+                            <span class="navbarToggler"><span></span><span></span><span></span></span>
+                        </div>
+
+                        <!-- Menu -->
+                        <div class="classy-menu" id="originalNav">
+                            <!-- close btn -->
+                            <div class="classycloseIcon">
+                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            </div>
+
+                            <!-- Nav Start -->
+                            <div class="classynav">
+                                <ul>
+                                    <li><a asp-action="Index" asp-controller="Home">Anasayfa</a></li>
+                                    <li><a asp-action="Index" asp-controller="Blog">Bloglar</a></li>
+                                    <li>
+                                        <a href="/about/index">Hakkımda</a>
+                                        <ul class="dropdown">
+                                            <li><a href="/education/index">Eğitimler</a></li>
+                                            <li><a href="/test/index">Testler</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a asp-action="Index" asp-controller="Contact">İletişim</a></li>
+                                    <li>
+                                        <a href="#">Pages</a>
+                                        <ul class="dropdown">
+                                            <li><a href="index.html">Home</a></li>
+                                            <li><a href="about-us.html">About Us</a></li>
+                                            <li><a href="single-post.html">Single Post</a></li>
+                                            <li><a href="contact.html">Contact</a></li>
+                                            <li><a href="coming-soon.html">Coming Soon</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                <!-- Search Form  -->
+                                <div id="search-wrapper">
+                                    
+                                    <form asp-controller="Blog" asp-action="Index" method="get">
+                                        <input type="text" id="search" name="search" placeholder="Blog arayın...">
+                                        <div id="close-icon"></div>
+                                        <input class="d-none" type="submit" value="">
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Nav End -->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- Navbar End -->
+    </header>
+    <!-- ##### Header Area End ##### -->
+    @RenderBody()
+
+
+    @Html.Partial("_Footer")
+    <!-- jQuery (Necessary for All JavaScript Plugins) -->
+    <script src="~/Theme/js/jquery/jquery-2.2.4.min.js"></script>
+
+    <!-- Popper js -->
+    <script src="~/Theme/js/popper.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="~/Theme/js/bootstrap.min.js"></script>
+    <!-- Plugins js -->
+    <script src="~/Theme/js/plugins.js"></script>
+    <!-- Active js -->
+    <script src="~/Theme/js/active.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        function handleSubmit() {
+            var email = $('#subscribesForm2').val();
+       
+            $.ajax({
+                type: 'POST',
+                url: '/Contact/NewsLatter',
+                contentType: 'application/x-www-form-urlencoded', // Değiştirildi
+                data: { email: email }, // JSON.stringify kaldırıldı
+                success: function (response) {
+                    alert("Kayıt olduğunuz için teşekkürler.")
+                    $('#subsModal').modal('hide');
+                },
+                error: function (error) {
+                    console.error('Hata:', error);
+                }
+            });
+
+            return false;
+        }       
+
+
+    </script>
+</body>
+
+</html>

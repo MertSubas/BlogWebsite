@@ -1,0 +1,204 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- ##### Slider Başlangıç ##### -->
+<div class="hero-area">
+    <!-- Hero Slides Area -->
+    <div class="hero-slides owl-carousel">
+        @foreach (var item in Model.Slider)
+        {
+            <div class="single-hero-slide bg-img" style="background-image: url(@item.SliderImage);">
+                <div class="container h-100">
+                    <div class="row h-100 align-items-center">
+                        <div class="col-12">
+                            <div class="slide-content text-center">
+                                <div class="post-tag">
+                                    <a href="#" data-animation="fadeInUp">@item.SliderSmallText</a>
+                                </div>
+                                <h2 data-animation="fadeInUp" data-delay="250ms"><a href="single-post.html">@item.SliderBigText</a></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+<!-- ##### Slider Bitiş ##### -->
+<!-- ##### Body Start ##### -->
+<div class="blog-wrapper section-padding-100 clearfix">
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Single Blog Area -->
+            <div class="col-sm-12 col-md-12 col-lg-7 col-xl-7">
+                <div class="single-blog-area clearfix mb-100">
+                    <!-- Blog Content -->
+                    <div class="single-blog-content">
+                        <div class="line"></div>
+                        <h4><a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@Model.RandomPost.BlogId" class="post-headline">@Model.RandomPost.BlogTitle</a></h4>
+                        @if (Model.RandomPost.BlogContent.Length > 200)
+                        {
+                            @Html.Raw(Model.RandomPost.BlogContent.Substring(0, 300) + "...")
+                        }
+                        else
+                        {
+                            @Html.Raw(Model.RandomPost.BlogContent)
+                        }
+                        <div>
+                            <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@Model.RandomPost.BlogId" class="btn original-btn">Devamını Oku</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Single Blog Area -->
+            <div class="col-sm-12 col-md-12 col-lg-5 col-xl-5">
+                <div class="single-catagory-area clearfix mb-100">
+                    <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@Model.RandomPost.BlogId">
+                        <img src=@Model.RandomPost.BlogImage alt="">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-lg-9">
+                @foreach (var blog in Model.Posts)
+                {
+                    <!-- Single Blog Area  -->
+                    <div class="single-blog-area blog-style-2 mb-50 wow fadeInUp" data-wow-delay="0.2s" data-wow-duration="1000ms">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-md-6">
+                                <div class="single-blog-thumbnail">
+                                    <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.BlogId">
+                                        <img src=@blog.BlogImage alt="">
+                                    </a>
+                                    <div class="post-date">
+                                        <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.BlogId">@blog.CreateDate.Day <span>@blog.CreateDate.ToString("MMMM") @blog.CreateDate.ToString("yyyy")</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <!-- Blog Content -->
+                                <div class="single-blog-content">
+                                    <div class="line"></div>
+
+                                    <h4><a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.BlogId" class="post-headline">@blog.BlogTitle</a></h4>
+                                    @if (blog.BlogContent.Length > 200)
+                                    {
+                                        @Html.Raw(blog.BlogContent.Substring(0, 200) + "...")
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(blog.BlogContent)
+                                    }
+                                    <div class="post-meta">
+                                        <p><a href="/About">Gamze Çoban</a></p>
+                                        <p><a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.BlogId">@blog.Comments.Count() Yorum</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Load More -->
+                <div class="load-more-btn mt-100 wow fadeInUp" data-wow-delay="0.7s" data-wow-duration="1000ms">
+                    <a href="/Blog" class="btn original-btn">Tüm Postlar</a>
+                </div>
+            </div>
+
+            <!-- ##### Sidebar Area ##### -->
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="post-sidebar-area">
+
+
+
+
+
+                    <!-- Widget Area -->
+                    <div class="sidebar-widget-area">
+                        <h5 class="title">Öneriler</h5>
+
+                        <div class="widget-content">
+                            @foreach (var item in Model.Suggestions)
+                            {
+                                
+
+                                <!-- Single Blog Post -->
+                                <div class="single-blog-post d-flex align-items-center widget-post">
+                                    <!-- Post Thumbnail -->
+                                    @{
+                                        var linkText = "";
+                                        var link = "";
+                                        var action = "";
+                                        if (item.OgrId == 1)
+                                        {
+                                            linkText = "Film";
+                                            link = "Movies";
+                                            action = "MovieDetail";
+                                        }
+                                        else if (item.OgrId == 2)
+                                        {
+                                            linkText = "Kitap";
+                                            link = "Books";
+                                            action = "BookDetail";
+                                        }
+                                        else
+                                        {
+                                            linkText = "Oyun";
+                                            link = "Games";
+                                            action = "GameDetail";
+                                        }
+                                    }
+                                    <div class="post-thumbnail">
+                                        <a asp-controller="Suggestion" asp-action="@action" asp-route-id="@item.SuggestionId">
+                                        <img src=@item.SuggestionImage alt="">
+                                        </a>
+                                    </div>
+                                    <!-- Post Content -->
+                                    <div class="post-content">
+                                       
+                                        <div class="post-meta">
+                                            <p><a asp-controller="Suggestion" asp-action="@link">@linkText</a></p>
+                                        </div>
+                                        <h4><a asp-controller="Suggestion" asp-action="@action" asp-route-id="@item.SuggestionId" class="post-headline">@item.SuggestionTitle</a></h4>
+
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                    <!-- Widget Area -->
+                    <div class="sidebar-widget-area">
+                        <h5 class="title">Tags</h5>
+                        <div class="widget-content">
+                            <ul class="tags">
+                                @using System.Globalization
+                                @foreach (var blog in Model.Posts)
+                                {
+
+
+                                    @foreach (var tag in blog.BlogTag.Split(','))
+                                    {
+                                        string capitalizedTag = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(tag.Trim());
+                                        <li><a href="#">@capitalizedTag</a></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ##### Body End ##### -->
