@@ -1,0 +1,160 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .contact-info {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+        .contact-info p {
+            margin-bottom: 10px;
+        }
+</style>
+<!-- ##### Google Map ##### -->
+<div class="row contact-info">
+    <div class="col-5 d-flex justify-content-center">
+  
+            <div class="container">
+            <div class="contact-info">
+                <p><strong>Adres:</strong> Kısıklı Mah. Tepelik Sok. NO:16 Üsküdar/İstanbul</p>
+                <p><strong>Telefon:</strong> <a href="tel:02165776268">0216 577 62 68</a></p>
+                <p><strong>Telefon:</strong> <a href="tel:05365219086">0536 521 90 86</a></p>
+                <p><strong>Email:</strong> <a href="mailto:psikologamzecoban@gmail.com">psikologamzecoban@gmail.com</a></p>
+            </div>
+            </div>
+    
+    </div>
+    <div class="map-area col-6">
+        <div style="width: 100%"><iframe width="100%" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=K%C4%B1s%C4%B1kl%C4%B1%20Mah.%20Tepelik%20Sok.%20NO:16%20%C3%9Csk%C3%BCdar/%C4%B0stanbul+(My%20Business%20Name)&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a href="https://www.gps.ie/">gps trackers</a></iframe></div>
+    </div>
+    </div>
+</div>
+
+
+
+<!-- ##### Contact Area Start ##### -->
+<section class="contact-area section-padding-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Contact Form Area -->
+            <div class="col-12 col-md-10 col-lg-9">
+                <div class="contact-form">
+                    <h5 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">İletişime Geçin</h5>
+                    <!-- Contact Form -->
+                    <form id="myForm" action="#" method="post">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="group">
+                                    <input type="text" name="Name" id="name" required>
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                    <label>İsim</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="group">
+                                    <input type="email" name="Email" id="email" required>
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                    <label>Email</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="group">
+                                    <textarea name="Content" id="message" required></textarea>
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                    <label>Mesaj</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn original-btn">Gönder</button>
+                            </div>
+                        </div>
+                        <div style="display:none" id="infodiv" class="alert alert-success" role="alert">
+                            <span id="info"></span>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-12 col-md-10 col-lg-3 mt-5">
+                    <div class="post-sidebar-area">
+
+                        <!-- Widget Area -->
+                        <div class="sidebar-widget-area">
+                            <div class="widget-content social-widget d-flex justify-content-between">
+                                <a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-dribbble" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-behance" aria-hidden="true"></i></a>
+                                <a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+          
+        </div>
+    </div>
+</section>
+<!-- ##### Contact Area End ##### -->
+@section Scripts {
+
+    <script>
+        $('#myForm').submit(sendMessage);
+
+        function sendMessage(event) {
+            event.preventDefault();
+            var formData = $('#myForm').serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/Contact/SendMessage',
+                data: formData,
+                success: function (response) {
+
+                    if (response == "Ok") {
+                        $('#info').text('Mesajınız alınmıştır');
+                    }
+                    else {
+                        $('#info').text('Bir Hata Oluştu Tekrar Deneyiniz');
+                    }
+                    $('#name').val("");
+                    $('#email').val("");
+                    $('#message').val("");
+                    $('#infodiv').show();
+                },
+                error: function (error) {
+
+                    console.error('Hata:', error);
+                }
+            });
+        }
+    </script>
+
+}

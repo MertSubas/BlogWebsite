@@ -1,0 +1,522 @@
+﻿@using PagedList
+
+@model AdminBlogList
+
+@{
+    ViewData["Title"] = "Blog Ekleme";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+}
+<style>
+    /* Add this CSS to make the modal full-width */
+    .modal-fullpage {
+        width: 100vw;
+        margin: 0;
+        max-width: 100%;
+    }
+
+    /* Optional: Set a maximum width for the modal content */
+    .modal-content {
+        max-width: 90%; /* Adjust this value as needed */
+        width: 100%;
+        overflow: hidden;
+        margin: auto; /* This centers the modal content horizontally */
+        margin-top: 25px;
+    }
+
+    .pagination {
+        display: flex;
+        list-style: none;
+    }
+
+        .pagination a {
+            padding: 8px;
+            margin: 4px;
+            text-decoration: none;
+            color: #333;
+            background-color: #eee;
+            border-radius: 4px;
+        }
+
+            .pagination a.active {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+        .pagination .ellipsis {
+            padding: 8px;
+            margin: 4px;
+            pointer-events: none;
+        }
+
+</style>
+@{
+    int deger = (int)ViewBag.pagenumber;
+}
+@* List Start *@
+
+            <div class="col-12 grid-margin stretch-card">
+                <!-- Updated the class from "col-lg-6" to "col-12" to take up the full width -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="card-title">Blog Listesi</h4>
+                            </div>
+                            <div class="col-md-6 d-flex justify-content-end">
+                                <input type="button" class="btn btn-gradient-info btn-sm"                       id="btnsubmit" value="Ekle" />
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>Blog Başlığı</th>
+                                        <th>Blog Oluşturulma Tarihi</th>
+                                        <th>Durumu</th>
+                                        <th>Güncelle</th>
+                                        <th>Aktif/Pasif</th>
+
+                                        <th>Yorumlar</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody class="blog-list">
+                                    @{
+                                        int sayi = 1;
+                                    }
+                                    @foreach (var post in Model.BlogList)
+                                    {
+                                        <tr class="blog-item">
+                                            <td class="fnt-bld">@($"{deger + sayi}.")</td>
+                                            <td>@post.BlogTitle</td>
+                                            <td>@post.CreateDate.ToShortDateString()</td>
+                                            <td><label class="badge badge-@(post.Status?"success":"danger")">@(post.Status ? "Yayında" : "Yayında Değil")</label></td>
+                                            <td><input type="submit" class="btn btn-warning btn-sm" id="btnEdit" onclick="blogEdit('@post.BlogId')" value="Güncelle" /></td>
+
+                                            <td>
+                                                <button class="btn btn-@(post.Status ? "danger" : "success")  btn-sm changeStatu" data-post-id="@post.BlogId">
+                                                    @(post.Status ? "Yayından Kaldır" : "Yayına Al")
+                                                </button>
+                                            </td>
+
+                                            <td>
+                                                <a href="/admin/Comment/AllComment/@post.BlogId" class="btn btn-info">
+                                                    Yorumlar
+                                                </a>
+                                            </td>
+
+                                        </tr>
+                                        sayi++;
+                                    }
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="pagination">
+                            @if (Model.PageNumber > 1)
+                            {
+                                <a href="/admin/post/index/1">&lt;</a>
+                            }
+
+                            @if (Model.PageNumber > 2)
+                            {
+                                <span class="ellipsis">...</span>
+                            }
+
+                            @for (int i = Math.Max(1, Model.PageNumber - 1); i <= Math.Min(Model.PageSize, Model.PageNumber + 1); i++)
+                            {
+                                <a href="/admin/post/index/@i" class="@(i == Model.PageNumber ? "active" : "")">@i</a>
+                            }
+
+                            @if (Model.PageNumber < ViewBag.data - 1)
+                            {
+                                <span class="ellipsis">...</span>
+                            }
+
+                            @if (Model.PageNumber < ViewBag.data)
+                            {
+                                <a href="/admin/post/index/@Model.PageSize">&gt;</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+       
+@* List End *@
+
+@* Modal Start *@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-fullpage" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="closeModalIcon" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title"> Blog Ekleme</h4>
+                            <br />
+                            <form class="forms-sample">
+                                <div class="form-group">
+                                    <label>Resim Yükle</label>
+                                    <input type="file" name="img[]" id="fileInput" class="file-upload-default" onchange="previewImage()">
+                                    <div id="imagePreview" class="mt-2" style="display: none;">
+                                        <img id="preview" src="#" alt="Resim Önizleme" style="max-width: 100px; max-height: 100px;">
+                                    </div>
+                                    <br />
+                                    <div class="input-group col-xs-12">
+                                        <input id="blogImage" type="text" class="form-control file-upload-info" disabled placeholder="Resim Yükle">
+                                        <span class="input-group-append">
+                                            <button class="file-upload-browse btn btn-gradient-primary" type="button" onclick="document.getElementById('fileInput').click()">Yükle</button>
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="blogTitle">Blog Başlığı</label>
+                                    <input type="text" class="form-control" id="blogTitle" placeholder="Blog Başlığı">
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogTag">Blog Tagları  <span style="color:#cb7fff;">  (Tagleri  ' , '  ile ayırarak yazınız.)</span></label>
+                                    <input type="text" class="form-control" id="blogTag" placeholder="Blog Tag">
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogStatu">Blog Statüsü</label>
+                                    <select class="form-control" id="blogStatu">
+                                        <option value="True">Aktif</option>
+                                        <option value="False">Pasif</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogContent">Blog İçeriği</label>
+                                    <textarea class="form-control" id="blogContent" name="blogContent" rows="4"></textarea>
+                                </div>
+                                <input type="button" class="btn btn-gradient-primary mr-2" id="btnBlogSubmit" value="Kaydet" />
+                                <input type="button" class="btn btn-gradient-primary mr-2" id="btnBlogSubmitEdit" value="Güncelle" />
+                                <button class="btn btn-light">İptal</button>
+
+                                <input type="hidden" id="modalBlogId" />
+                                <input type="hidden" id="orginalImagePath" />
+                                <input type="hidden" id="orginalThumbImagePath" />
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@* Modal End *@
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"></script>
+    <script>
+        CKEDITOR.replace('blogContent');
+
+        function blogEdit(id) {
+            $("#btnBlogSubmitEdit").show();
+            $.ajax({
+                type: "GET",
+                url: "/Admin/Post/GetData/" + id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                cache: false,
+                success: function (response) {
+                    var statusValue = response.status === true;
+                    $("#blogStatu").val(statusValue ? "True" : "False");
+                    showImagePreview(response.blogImage);
+                    CKEDITOR.instances['blogContent'].setData(response.blogContent);
+                    $("#blogTitle").val(response.blogTitle);
+                    $("#blogTag").val(response.blogTag);
+
+                    $("#modalBlogId").val(response.blogId);
+                    $("#orginalImagePath").val(response.blogImage);
+                    $("#orginalThumbImagePath").val(response.blogThumbImage);
+                    $("#btnBlogSubmit").hide();
+                    $(".card-title").text("Blog Güncelle");
+
+                }
+            });
+            $('#myModal').modal('show');
+        }
+
+        @*Güncelleme İşlemi Start*@
+            $(document).ready(function () {
+                $("#btnBlogSubmitEdit").on("click", function () {
+                    var fileInput = document.getElementById('fileInput');
+                    var file = fileInput.files[0];
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Admin/Post/UploadImage",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (imagePaths) {
+                            handleBlogEdit(imagePaths);
+                        },
+                        error: function (error) {
+                            alert("Fotoğraf yüklenirken bir hata oluştu.");
+                        }
+                    });
+                });
+                function handleBlogEdit(imagePaths) {
+                    console.log(imagePaths);
+                    var blogId = $("#modalBlogId").val();
+                    var blogTitle = $("#blogTitle").val();
+                    var blogContent = CKEDITOR.instances['blogContent'].getData();
+                    var blogTag = $("#blogTag").val();
+                    var blogStatus = $("#blogStatu").val() === "True";
+
+                    var postDatas = {
+                        BlogId: blogId,
+                        BlogTitle: blogTitle,
+                        BlogTag: blogTag,
+                        Status: blogStatus,
+                        BlogImage: imagePaths !== null ? imagePaths.originalPath : $("#orginalImagePath").val(),
+                        BlogThumbImage: imagePaths !== null ? imagePaths.thumbnailPath : $("#orginalThumbImagePath").val(),
+                        BlogContent: blogContent
+                    };
+                    console.log(postDatas)
+                    $.ajax({
+                        type: "POST",
+                        url: "/Admin/Post/Addpost",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: JSON.stringify(postDatas),
+                        success: function (response) {
+                            // $('#myModal').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı',
+                                text: 'Kayıt Başarıyla Eklendi!',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                            location.reload();
+
+                        },
+                        error: function (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata',
+                                text: 'Bir Hata Oluştu Tekrar Deneyiniz!',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                }
+
+            });
+        @*Güncelleme İşlemi End*@
+
+
+        @*Kaydet İşlemi Start*@
+            $(document).ready(function () {
+                $("#btnsubmit").click(function () {
+                    $("#btnBlogSubmitEdit").hide();
+                    $("#btnBlogSubmit").show();
+                    $(".card-title").text("Blog Kaydet");
+                    previewImage();
+                    // document.getElementById('fileInput').value = null;
+                    document.getElementById('preview').src = "";
+                    document.getElementById('blogImage').value = "";
+                    document.getElementById('blogTitle').value = "";
+                    document.getElementById('blogTag').value = "";
+                    document.getElementById('blogStatu').value = "";
+                    CKEDITOR.instances['blogContent'].setData("");
+
+                    document.getElementById('modalBlogId').value = "";
+                    document.getElementById('orginalImagePath').value = "";
+                    $('#myModal').modal('show');
+                });
+                $('#btnBlogSubmit').click(function () {
+
+                    var fileInput = document.getElementById('fileInput');
+                    var file = fileInput.files[0];
+
+                    var formData = new FormData();
+
+                    if (file) {
+                        formData.append('file', file);
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/Admin/Post/UploadImage",
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            success: function (imagePath) {
+                                handleBlogPost(imagePath);
+
+                            },
+                            error: function (error) {
+                                alert("Fotoğraf yüklenirken bir hata oluştu.");
+                            }
+                        });
+                    } else {
+                        handleBlogPost(null);
+                    }
+                });
+                function handleBlogPost(imagePath) {
+                    var blogTitle = $("#blogTitle").val();
+                    var blogContent = CKEDITOR.instances.blogContent.getData();
+                    var blogTag = $("#blogTag").val();
+                    var blogStatu = ($("#blogStatu").val() === "True");
+
+                    var postData = {
+                        BlogTitle: blogTitle,
+                        BlogTag: blogTag,
+                        Status: blogStatu,
+                        BlogImage: imagePath.originalPath,
+                        BlogThumbImage: imagePath.thumbnailPath,
+                        BlogContent: blogContent
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "/Admin/Post/AddPost",
+                        data: JSON.stringify(postData),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Başarılı',
+                                text: 'Kayıt Başarıyla Eklendi!',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                            location.reload();
+                        },
+                        error: function (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata',
+                                text: 'Bir Hata Oluştu Tekrar Deneyiniz!',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                }
+            });
+        @*Kaydet İşlemi End*@
+
+            function previewImage() {
+                // Dosya adını al ve göster
+                var fileName = document.getElementById('fileInput').value.split("\\").pop();
+                document.getElementById('fileName').innerHTML = fileName;
+
+                // Resim önizlemesini göster
+                document.getElementById('imagePreview').style.display = 'block';
+
+                // Dosya giriş alanını gizle ve temizle
+                document.getElementById('fileInput').style.display = 'none';
+                document.getElementById('fileInput').value = "";
+            }
+
+        @*Close Modal Start*@
+            $("#closeModalIcon").click(function () {
+                $('#myModal').modal('hide');
+            });
+        $("#closeModal2").click(function () {
+            $('#myModal').modal('hide');
+        });
+        @*Close Modal End*@
+
+
+        @*Delete Start*@
+            $('.changeStatu').click(function () {
+                var postId = $(this).data('post-id');
+                togglePostStatus(postId);
+            });
+        function togglePostStatus(postId) {
+            $.ajax({
+                type: "POST",
+                url: "/Admin/Post/Delete",
+                data: { postId: postId },
+                success: function (response) {
+                    console.log(response);
+                    Swal.fire({
+                        icon: response ? 'success' : 'error',
+                        title: response ? 'Başarılı' : 'Kaldırıldı',
+                        text: response ? 'Blog Yayına Alındı!' : 'Blog Yayından Kaldırıldı!',
+                    }).then(() => {
+                        location.reload();
+                    });
+
+                },
+                error: function (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while updating post status.',
+                    });
+                }
+            });
+        }
+        @*Delete End*@
+        @*Resim Alanın da Fotoğrafı gösterme*@
+            function previewImage() {
+                var fileInput = document.getElementById('fileInput');
+                var preview = document.getElementById('preview');
+                var imagePreview = document.getElementById('imagePreview');
+
+                if (fileInput.files && fileInput.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
+                    preview.src = '';
+                    imagePreview.style.display = 'none';
+                }
+            }
+        @*Resim Alanın da Fotoğrafı gösterme*@
+
+        @*Resim önizleme fonksiyonu*@
+            function showImagePreview(imagePath) {
+                var imagePreview = document.getElementById('imagePreview');
+                var blogImageInput = document.getElementById('blogImage');
+
+                if (imagePath) {
+                    // Resim varsa önizleme alanını göster
+                    imagePreview.style.display = 'block';
+                    // Resmi görüntüle
+                    $('#preview').attr('src', imagePath);
+                    // Resim yolu bilgisini input alanına yaz
+                    blogImageInput.value = imagePath;
+                } else {
+                    // Resim yoksa önizleme alanını gizle
+                    imagePreview.style.display = 'none';
+                    // Input alanını temizle
+                    blogImageInput.value = '';
+                }
+            }
+        @*Resim önizleme fonksiyonu End*@
+
+    </script>
+
+
+}
+
+

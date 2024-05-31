@@ -1,0 +1,325 @@
+﻿@model BlogPostViewModel
+@{
+    ViewData["Title"] = "BlogDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+
+</style>
+<!-- ##### Single Blog Area Start ##### -->
+<div class="single-blog-wrapper section-padding-0-100">
+
+  @*   <div class="breadcumb-area bg-img" style="background-image: url(@Model.BlogImage);">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+               
+            </div>
+        </div>
+    </div> *@
+    <!-- Single Blog Area  -->
+    <div class="single-blog-area blog-style-2 mb-50">
+        <div class="single-blog-thumbnail">
+            <div class="breadcumb-area bg-img" style="background-image: url(@Model.BlogImage);height: 20rem;">
+                <div class="container h-100">
+                    <div class="row h-100 align-items-center">
+                        <!-- Tarih alanını buraya taşıdık -->
+                        <div class="col-12">
+                            <div class="post-date">
+                                <a href="#">@Model.CreateDate.Day <span>@Model.CreateDate.ToString("MMMM") @Model.CreateDate.ToString("yyyy")</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <!-- ##### Post Content Area ##### -->
+            <div class="col-12 col-lg-9">
+                <!-- Single Blog Area  -->
+                <div class="single-blog-area blog-style-2 mb-50">
+                    <!-- Blog Content -->
+                    <div class="single-blog-content">
+                        <input type="hidden" value="@Model.BlogId" id="blogId" />
+                        <div class="line"></div>
+                        <h4 class="post-headline mb-0">@Model.BlogTitle</h4>
+                        <div class="post-meta mb-50">
+                            <p><a href="/About">Gamze Çoban</p></a>
+                            <p>@Model.Comments.Count() yorum</p>
+                        </div>
+                        @Html.Raw(Model.BlogContent)
+                    </div>
+                </div>
+
+                
+                <div class="post-a-comment-area mt-70">
+                    <h5 style="font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">Yorum Bırak</h5>
+                    <!-- Reply Form -->
+                    <form action="#" method="post" id="commentForm">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="group">
+                                    <input type="text" name="name" id="name" required>
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                    <label>İsim</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="group">
+                                    <input type="email" name="email" id="email" required>
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                    <label>Email</label>
+                                </div>
+                            </div>
+                            <div  id="replyContent"></div>
+                            <div style="display:none" id="replyContentId"></div>
+                            <div class="col-12">
+                                <div class="group">
+                                    <textarea name="message" id="message" required></textarea>
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                    <label>Yorum</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" id="submitComment" class="btn original-btn">Gönder</button>
+                                <button type="submit" id="cancelReply" style="display:none" class="btn original-btn">Vazgeç</button>
+                            </div>
+                        </div>
+                        <div style="display:none" id="infodiv" class="alert alert-success" role="alert">
+                            <span id="info"></span>
+                        </div>
+                    </form>
+                </div>
+                <!-- Comment Area Start -->
+                <div class="comment_area clearfix mt-70">
+                    <h5 class="title">Yorumlar</h5>
+                    <hr />
+
+                    <ol>
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <!-- Single Comment Area -->
+                            <li class="single_comment_area" id="comment-@comment.CommentId">
+                                <!-- Comment Content -->
+                                <div class="comment-content d-flex">
+                                    <!-- Comment Author -->
+                                    <div class="comment-author">
+                                        <img src="~/Theme/img/bg-img/b7.jpg" alt="author">
+                                    </div>
+                                    <!-- Comment Meta -->
+                                    <div class="comment-meta">
+                                        <a href="#" class="post-date">@comment.CreateDate.ToString("g")</a>
+                                        <p>@comment.CommentUserName</p>
+                                        <p>@comment.CommentContent</p>
+                                        <a href="#" class="comment-reply" onclick="toggleReplyForm('@comment.CommentId', '@comment.CommentUserName')">Yanıtla</a>
+                                    </div>
+                                </div>
+                                @foreach (var replyCo in comment.ReplyComments)
+                                {
+                                    <ol class="children">
+                                        <li class="single_comment_area">
+                                            <!-- Comment Content -->
+                                            <div class="comment-content d-flex">
+                                                <!-- Comment Author -->
+                                                <div class="comment-author">
+                                                    <img src="~/Theme/img/bg-img/b7.jpg" alt="author">
+                                                </div>
+                                                <!-- Comment Meta -->
+                                                <div class="comment-meta">
+                                                    <a href="#" class="post-date">@replyCo.ReplyCreateDate.ToString("g")</a>
+                                                    <p><a href="#" class="post-author">@replyCo.ReplyCommentUserName</a></p>
+                                                    <p>@replyCo.ReplyCommentContent</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                }
+                            </li>
+                        }
+                    </ol>
+                </div>
+            
+
+                
+            </div>
+
+            <!-- ##### Sidebar Area ##### -->
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="post-sidebar-area">
+
+         
+             
+
+                    <!-- Widget Area -->
+                    <div class="sidebar-widget-area">
+                        <h5 class="title">Son Bloglar</h5>
+
+                        <div class="widget-content">
+                            @foreach (var blog in Model.Blogs)
+                            {
+                                <!-- Single Blog Post -->
+                                <div class="single-blog-post d-flex align-items-center widget-post">
+                                    <!-- Post Thumbnail -->
+                                    <div class="post-thumbnail">
+                                        <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.BlogId">
+                                        <img src=@blog.BlogThumbImage alt="">
+                                        </a>
+                                    </div>
+                                    <!-- Post Content -->
+                                    <div class="post-content">
+                                        <a href="/About" class="post-tag">Gamze Çoban</a>
+                                        <h4><a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.BlogId" class="post-headline">@blog.BlogTitle</a></h4>
+                                        <div class="post-meta">
+                                            <p><a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.BlogId">@blog.CreateDate.Day <span>@blog.CreateDate.ToString("MMMM") @blog.CreateDate.ToString("yyyy")</span></a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                    <!-- Widget Area -->
+                    <div class="sidebar-widget-area">
+                        <h5 class="title">Tags</h5>
+                        <div class="widget-content">
+                            <ul class="tags">
+                                @using System.Globalization
+
+                                @foreach (var tag in Model.BlogTag.Split(','))
+                                {
+                                    string capitalizedTag = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(tag.Trim());
+                                    <li><a href="#">@capitalizedTag</a></li>
+                                }
+                                
+                              
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ##### Single Blog Area End ##### -->
+@section Scripts {
+    <script>
+        // Yanıtla butonlarına tıklama olayını dinle
+        document.querySelectorAll('.comment-reply').forEach(function (button) {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                var commentForm = document.getElementById('commentForm');
+                var commentId = this.closest('li').id; // İlgili yorumun ID'sini al
+                var pureCommentId = commentId.replace('comment-', ''); // "comment-" yazısını kaldır
+                document.getElementById('replyContentId').innerText = pureCommentId;
+                var replyContent = this.parentElement.querySelector('p').innerText; // Yanıtlanacak yorumun içeriği
+                commentForm.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Formu ekranda ortala
+                document.getElementById('cancelReply').style.display = 'inline-block'; // Vazgeç butonunu göster
+                document.getElementById('replyContent').innerText = 'Kişiye cevap veriliyor: ' + replyContent; // Yanıtlanacak yorumu göster
+            });
+        });
+  
+
+        // Vazgeç butonuna tıklama olayını dinle
+        document.getElementById('cancelReply').addEventListener('click', function (e) {
+            e.preventDefault();
+            var commentForm = document.getElementById('commentForm');
+            var messageInput = commentForm.querySelector('textarea[name="message"]');
+            messageInput.value = ''; // Yorumu temizle
+            this.style.display = 'none'; // Vazgeç butonunu gizle
+            document.getElementById('replyContent').innerText = ''; // Yanıtlanacak yorumu temizle
+            document.getElementById('replyContentId').innerText = '';
+        });
+        $(document).ready(function () {
+            $('#commentForm').submit(function (e) {
+                e.preventDefault(); // Formun normal submit işlemini engelle
+
+                // Input değerlerini al
+                var nameValue = $('#name').val().trim();
+                var emailValue = $('#email').val().trim();
+                var messageValue = $('#message').val().trim();
+                var blogId = $('#blogId').val().trim();
+                var commentId = $('#replyContentId').text().trim();
+     
+                if (commentId == "") {
+                    var formData = {
+                        CommentUserName: nameValue,
+                        CommentEmail: emailValue,
+                        CommentContent: messageValue,
+                        BlogPostId: blogId
+                    };
+
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Comment/AddComment',
+                        data: formData,
+                        success: function (response) {
+
+                            if (response == "Ok") {
+                                $('#info').text('Yorumunuz alınmıştır. Onaylandıktan sonra yayınlanacaktır. Teşekkürler.');
+                            }
+                            else {
+                                $('#info').text('Bir Hata Oluştu Tekrar Deneyiniz');
+                            }
+                            $('#name').val("");
+                            $('#email').val("");
+                            $('#message').val("");
+                            $('#infodiv').show();
+                        },
+                        error: function (error) {
+
+                            console.error('Hata:', error);
+                        }
+                    });
+                }
+                else {                   
+                    var formData = {
+                        ReplyCommentUserName: nameValue,
+                        ReplyCommentEmail: emailValue,
+                        ReplyCommentContent: messageValue,
+                        CommentId: commentId
+                    };
+
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Comment/AddReplyComment',
+                        data: formData,
+                        success: function (response) {
+
+                            if (response == "Ok") {
+                                $('#info').text('Yorumunuz alınmıştır');
+                            }
+                            else {
+                                $('#info').text('Bir Hata Oluştu Tekrar Deneyiniz');
+                            }
+                            $('#name').val("");
+                            $('#email').val("");
+                            $('#message').val("");
+                            $('#infodiv').show();
+                        },
+                        error: function (error) {
+
+                            console.error('Hata:', error);
+                        }
+                    });
+                }
+                // Boş input kontrolü
+                if (nameValue === '' || emailValue === '' || messageValue === '') {
+                    alert('Lütfen tüm alanları doldurun.');
+                    return;
+                }
+
+                // Form verilerini al
+              
+            });
+        });
+    </script>
+}
